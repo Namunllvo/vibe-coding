@@ -1,0 +1,198 @@
+/* 기존 CSS 내용 유지 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a; /* 어두운 배경 */
+    color: #f0f0f0; /* 밝은 텍스트 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px; /* 적당한 너비 제한 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-arrow {
+    font-size: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a90e2; /* 파란색 제목 */
+}
+
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 한 줄에 7개 숫자 */
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.number-button {
+    width: 45px; /* 버튼 크기 고정 */
+    height: 45px; /* 버튼 크기 고정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333; /* 기본 버튼 배경색 */
+    border-radius: 50%; /* 원형 */
+    color: #f0f0f0;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border: none; /* 기본 버튼 테두리 제거 */
+    -webkit-appearance: none; /* Safari에서 버튼 기본 스타일 제거 */
+    -moz-appearance: none; /* Firefox에서 버튼 기본 스타일 제거 */
+    appearance: none; /* 모든 브라우저에서 버튼 기본 스타일 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+.number-button:hover {
+    background-color: #555;
+}
+
+.number-button.selected {
+    background-color: #4a90e2; /* 선택된 버튼 배경색 (파란색) */
+    color: white;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auto-select-btn, .submit-btn {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auto-select-btn {
+    background-color: #333;
+    color: #4a90e2; /* 파란색 텍스트 */
+}
+
+.auto-select-btn .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.submit-btn {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 새로운 슬라이더 관련 스타일 추가 */
+.range-selector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.range-selector label {
+    font-size: 16px;
+    margin-right: 10px;
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+.range-selector input[type="range"] {
+    flex-grow: 1; /* 슬라이더가 가능한 공간을 모두 차지하도록 */
+    margin: 0 15px;
+    -webkit-appearance: none; /* 기본 웹킷 스타일 제거 */
+    width: 100%;
+    height: 8px;
+    background: #555;
+    border-radius: 5px;
+    outline: none;
+    transition: opacity .2s;
+}
+
+.range-selector input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4a90e2; /* 슬라이더 핸들 색상 */
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.range-selector input[type="range"]::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#currentMaxNumber {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4a90e2;
+    min-width: 60px; /* 숫자가 길어져도 공간 확보 */
+    text-align: right;
+}
+
+/* 숫자 버튼 그리드의 열 개수를 동적으로 조절하기 위해 (선택 사항) */
+/* 큰 범위의 숫자가 되면 버튼이 많아지므로 유동적인 그리드 설정을 고려할 수 있습니다. */
+.number-grid {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); */ /* 이 설정을 사용하면 더 유동적으로 열이 바뀝니다 */
+    grid-template-columns: repeat(7, 1fr); /* 기존 7개 유지 */
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+/* 작은 화면에서 슬라이더 레이아웃 조정 */
+@media (max-width: 600px) {
+    .range-selector {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .range-selector label {
+        margin-bottom: 5px;
+    }
+    .range-selector input[type="range"] {
+        margin: 0 0 10px 0;
+        width: calc(100% - 10px); /* 패딩 고려 */
+    }
+    #currentMaxNumber {
+        width: 100%;
+        text-align: left;
+    }
+}

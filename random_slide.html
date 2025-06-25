@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 번호 선택</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="back-arrow">&lt;</span>
+            <span class="title">번호 6개 선택 완료</span>
+        </div>
+
+        <div class="range-selector">
+            <label for="maxNumberRange">번호 범위:</label>
+            <input type="range" id="maxNumberRange" min="10" max="100" value="45">
+            <span id="currentMaxNumber">1 - 45</span>
+        </div>
+        <div class="number-grid">
+            </div>
+
+        <div class="buttons">
+            <button id="autoSelectBtn" class="auto-select-btn">
+                <img src="path/to/dice-icon.png" alt="자동 선택 아이콘" class="icon">
+                자동 선택하기
+            </button>
+            <button id="submitBtn" class="submit-btn">이 번호로 응모하기</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
