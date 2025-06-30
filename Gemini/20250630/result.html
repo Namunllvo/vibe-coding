@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 응모 결과</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* result.html 전용 추가/오버라이드 CSS */
+        .result-container {
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            color: #f0f0f0;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .result-header h1 {
+            font-size: 24px;
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        .result-header p {
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        .lotto-info {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .selected-numbers-display {
+            background-color: #ffffff; /* 흰색 배경 */
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column; /* 세로 정렬 */
+            align-items: flex-start; /* 왼쪽 정렬 */
+        }
+
+        .selected-numbers-display h3 {
+            color: #333; /* 검은색 텍스트 */
+            font-size: 18px;
+            margin-bottom: 15px;
+            width: 100%; /* 전체 너비 차지 */
+            text-align: left; /* 왼쪽 정렬 */
+        }
+
+        .number-line {
+            display: flex;
+            flex-wrap: wrap; /* 번호가 많아지면 줄바꿈 */
+            gap: 8px; /* 번호 사이 간격 */
+            width: 100%; /* 부모 너비에 맞춤 */
+            justify-content: flex-start; /* 왼쪽 정렬 */
+        }
+
+        .number-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* 번호 색상 (로또 공 색상과 유사하게 설정) */
+        /* 1-10 노란색, 11-20 파란색, 21-30 빨간색, 31-40 회색, 41-45 초록색 */
+        .color-1 { background-color: #fbc400; } /* yellow */
+        .color-2 { background-color: #69c8f2; } /* blue */
+        .color-3 { background-color: #ff7272; } /* red */
+        .color-4 { background-color: #aaa; }    /* gray */
+        .color-5 { background-color: #b0d840; } /* green */
+        
+        /* 당첨 번호 표시를 위한 스타일 (예시, 실제 당첨 번호는 여기서 표시하지 않을 수 있음) */
+        /* .winning-numbers { ... } */
+        /* .winning-number-circle { ... } */
+
+        .footer-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background-color: #4a90e2; /* 파란색 */
+            color: white;
+        }
+
+        .action-button.secondary {
+            background-color: #333;
+            color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container result-container">
+        <div class="header">
+            <span class="back-arrow" onclick="history.back()">&lt;</span>
+            <span class="title">결과 보기</span>
+            <span class="info-link" style="margin-left: auto; font-size: 14px; color: #4a90e2;">안내</span>
+        </div>
+
+        <div class="result-header">
+            <h1>1,000만원 당첨자</h1>
+            <p>토요일 밤 8시 발표</p>
+            <p>실제 로또 당첨번호로 추첨해요.</p>
+        </div>
+
+        <div class="lotto-info">
+            응모한 로또 - <span id="numPicksCount">0개</span>
+            <p>6회차 로또 3장</p>
+        </div>
+
+        <div class="selected-numbers-display">
+            <h3>내가 선택한 번호</h3>
+            <div id="userNumbersDisplay" class="number-line">
+                </div>
+        </div>
+
+        <div class="footer-buttons">
+            <button class="action-button">로또 응모하기</button>
+            </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userSelectedNumbersJSON = localStorage.getItem('userSelectedNumbers');
+            const numberOfPicks = localStorage.getItem('numberOfPicks');
+            const userNumbersDisplay = document.getElementById('userNumbersDisplay');
+            const numPicksCountSpan = document.getElementById('numPicksCount');
+
+            if (userSelectedNumbersJSON) {
+                const userSelectedNumbers = JSON.parse(userSelectedNumbersJSON);
+                
+                // 뽑은 개수 업데이트
+                if (numberOfPicks) {
+                    numPicksCountSpan.textContent = `${numberOfPicks}개`;
+                } else {
+                    numPicksCountSpan.textContent = `${userSelectedNumbers.length}개`;
+                }
+                
+                userSelectedNumbers.forEach(number => {
+                    const numberCircle = document.createElement('div');
+                    numberCircle.classList.add('number-circle');
+                    
+                    // 로또 공 색상 규칙 적용
+                    if (number >= 1 && number <= 10) {
+                        numberCircle.classList.add('color-1'); // 노란색
+                    } else if (number >= 11 && number <= 20) {
+                        numberCircle.classList.add('color-2'); // 파란색
+                    } else if (number >= 21 && number <= 30) {
+                        numberCircle.classList.add('color-3'); // 빨간색
+                    } else if (number >= 31 && number <= 40) {
+                        numberCircle.classList.add('color-4'); // 회색
+                    } else if (number >= 41 && number <= 45) { // 45까지는 초록
+                        numberCircle.classList.add('color-5'); // 초록색
+                    } else { // 46 이상은 다른 색상 또는 기본값 (예: 검은색)
+                        numberCircle.style.backgroundColor = '#000'; // 임시로 검은색
+                    }
+                    
+                    numberCircle.textContent = number;
+                    userNumbersDisplay.appendChild(numberCircle);
+                });
+            } else {
+                userNumbersDisplay.textContent = '선택된 번호가 없습니다.';
+                numPicksCountSpan.textContent = '0개';
+            }
+
+            // '로또 응모하기' 버튼 클릭 시 (다시 첫 페이지로 이동 등)
+            document.querySelector('.action-button').addEventListener('click', () => {
+                alert('실제 응모 로직은 여기에 구현됩니다.');
+                // 예: 다시 번호 선택 페이지로 이동
+                window.location.href = 'index.html'; 
+            });
+        });
+    </script>
+</body>
+</html>
