@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 응모 결과</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* result.html 전용 추가/오버라이드 CSS */
+        .result-container {
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            color: #f0f0f0;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .result-header h1 {
+            font-size: 24px;
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        .result-header p {
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        .lotto-info {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px; /* 각 로또 내역 간 간격 줄임 */
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        /* 각 응모 내역 카드 스타일 */
+        .entry-card {
+            background-color: #ffffff; /* 흰색 배경 */
+            border-radius: 10px;
+            padding: 15px 20px; /* 패딩 조정 */
+            margin-bottom: 20px; /* 각 카드 사이 간격 */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 왼쪽 정렬 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+        }
+        .entry-card:last-child {
+            margin-bottom: 0; /* 마지막 카드는 아래 마진 없음 */
+        }
+
+        .entry-card h3 {
+            color: #333; /* 검은색 텍스트 */
+            font-size: 16px; /* 폰트 크기 조정 */
+            margin-top: 0;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid #eee; /* 하단 구분선 */
+            padding-bottom: 8px;
+        }
+
+        .entry-card .entry-meta {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .number-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .number-circle {
+            width: 35px; /* 원 크기 살짝 줄임 */
+            height: 35px; /* 원 크기 살짝 줄임 */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px; /* 폰트 크기 조정 */
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0; /* 줄어들지 않도록 */
+        }
+
+        /* 번호 색상 (로또 공 색상과 유사하게 설정) */
+        .color-1 { background-color: #fbc400; } /* yellow */
+        .color-2 { background-color: #69c8f2; } /* blue */
+        .color-3 { background-color: #ff7272; } /* red */
+        .color-4 { background-color: #aaa; }    /* gray */
+        .color-5 { background-color: #b0d840; } /* green */
+        
+        .footer-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background-color: #4a90e2; /* 파란색 */
+            color: white;
+        }
+
+        .action-button.secondary {
+            background-color: #333;
+            color: #4a90e2;
+        }
+
+        /* 응모 내역 컨테이너 */
+        #lotteryEntriesContainer {
+            margin-bottom: 30px;
+        }
+
+        .no-entries {
+            color: #ccc;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container result-container">
+        <div class="header">
+            <span class="back-arrow" onclick="location.href='index.html';">&lt;</span> <span class="title">결과 보기</span>
+            <span class="info-link" style="margin-left: auto; font-size: 14px; color: #4a90e2;">안내</span>
+        </div>
+
+        <div class="result-header">
+            <h1>1,000만원 당첨자</h1>
+            <p>토요일 밤 8시 발표</p>
+            <p>실제 로또 당첨번호로 추첨해요.</p>
+        </div>
+
+        <div class="lotto-info">
+            총 응모한 로또 - <span id="totalEntriesCount">0개</span>
+            <p>6회차 로또 (예시)</p> </div>
+
+        <div id="lotteryEntriesContainer">
+            </div>
+
+        <div class="footer-buttons">
+            <button class="action-button" onclick="location.href='index.html';">다시 응모하기</button>
+            <button class="action-button secondary" id="clearEntriesBtn">모든 내역 지우기</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lotteryEntriesContainer = document.getElementById('lotteryEntriesContainer');
+            const totalEntriesCountSpan = document.getElementById('totalEntriesCount');
+            const clearEntriesBtn = document.getElementById('clearEntriesBtn');
+
+            // 로또 공 색상 클래스를 결정하는 헬퍼 함수
+            function getNumberColorClass(number) {
+                if (number >= 1 && number <= 10) {
+                    return 'color-1'; // 노란색
+                } else if (number >= 11 && number <= 20) {
+                    return 'color-2'; // 파란색
+                } else if (number >= 21 && number <= 30) {
+                    return 'color-3'; // 빨간색
+                } else if (number >= 31 && number <= 40) {
+                    return 'color-4'; // 회색
+                } else if (number >= 41 && number <= 45) {
+                    return 'color-5'; // 초록색
+                } else {
+                    return ''; // 46 이상은 별도의 색상 클래스 없음 (기본값)
+                }
+            }
+
+            // 모든 응모 내역을 화면에 표시하는 함수
+            function displayLotteryEntries() {
+                lotteryEntriesContainer.innerHTML = ''; // 기존 내용 초기화
+                const lotteryEntriesJSON = localStorage.getItem('lotteryEntries');
+                const lotteryEntries = lotteryEntriesJSON ? JSON.parse(lotteryEntriesJSON) : [];
+
+                totalEntriesCountSpan.textContent = `${lotteryEntries.length}개`;
+
+                if (lotteryEntries.length === 0) {
+                    lotteryEntriesContainer.innerHTML = '<p class="no-entries">응모한 로또 내역이 없습니다. 번호를 선택하여 응모해 보세요!</p>';
+                    return;
+                }
+
+                // 최신 응모 내역부터 보이도록 역순으로 정렬
+                const sortedEntries = [...lotteryEntries].sort((a, b) => b.id - a.id);
+
+                sortedEntries.forEach((entry, index) => {
+                    const entryCard = document.createElement('div');
+                    entryCard.classList.add('entry-card');
+
+                    // 응모 내역 제목 (예: "내 선택 (1)") 또는 타임스탬프 기반
+                    const entryTitle = document.createElement('h3');
+                    entryTitle.textContent = `내 선택 #${sortedEntries.length - index}`; // 최신 번호부터 1, 2, 3...
+                    entryCard.appendChild(entryTitle);
+
+                    const entryMeta = document.createElement('p');
+                    entryMeta.classList.add('entry-meta');
+                    entryMeta.textContent = `뽑은 개수: ${entry.numPicks}개 (범위: 1 - ${entry.maxRange}) / 응모일: ${entry.date}`;
+                    entryCard.appendChild(entryMeta);
+
+                    const numberLine = document.createElement('div');
+                    numberLine.classList.add('number-line');
+
+                    entry.numbers.forEach(number => {
+                        const numberCircle = document.createElement('div');
+                        numberCircle.classList.add('number-circle');
+                        numberCircle.classList.add(getNumberColorClass(number)); // 색상 클래스 적용
+                        
+                        // 46 이상인 숫자의 경우 배경색 직접 지정 (예시)
+                        if (number > 45) {
+                            numberCircle.style.backgroundColor = '#666'; // 회색 계열
+                        }
+
+                        numberCircle.textContent = number;
+                        numberLine.appendChild(numberCircle);
+                    });
+
+                    entryCard.appendChild(numberLine);
+                    lotteryEntriesContainer.appendChild(entryCard);
+                });
+            }
+
+            // 모든 내역 지우기 버튼
+            clearEntriesBtn.addEventListener('click', () => {
+                if (confirm('모든 응모 내역을 지우시겠습니까?')) {
+                    localStorage.removeItem('lotteryEntries');
+                    displayLotteryEntries(); // UI 다시 로드
+                    alert('모든 응모 내역이 지워졌습니다.');
+                }
+            });
+
+            // 페이지 로드 시 응모 내역 표시
+            displayLotteryEntries();
+        });
+    </script>
+</body>
+</html>
