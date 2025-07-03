@@ -1,0 +1,237 @@
+/* 기존 CSS 내용 유지 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a; /* 어두운 배경 */
+    color: #f0f0f0; /* 밝은 텍스트 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px; /* 적당한 너비 제한 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 요소들을 양쪽 끝으로 정렬 */
+    margin-bottom: 20px;
+    width: 100%; /* 부모 너비에 맞춰서 정렬되도록 */
+}
+
+.back-arrow {
+    font-size: 24px;
+    /* margin-right: 10px; // 이제 필요없음, flex auto-margin으로 조절 */
+    cursor: pointer;
+    padding: 5px; /* 클릭 영역 확보 */
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a90e2; /* 파란색 제목 */
+    /* flex-grow: 1; // 제목이 남은 공간을 차지하여 중앙으로 밀어낼 수 있음 */
+    text-align: center; /* 제목 텍스트 중앙 정렬 */
+    margin-left: auto; /* 왼쪽 화살표와 제목 사이 간격 조절 */
+    margin-right: auto; /* 오른쪽 버튼과 제목 사이 간격 조절 */
+    /* 제목이 항상 중앙에 오도록 하려면 margin-left: auto; margin-right: auto; 를 사용하고
+       header-action-btn의 width를 title의 margin-left에 맞춰줄 필요가 있습니다.
+       여기서는 simple하게 space-between으로 갑니다. */
+}
+
+.header-action-btn {
+    font-size: 14px; /* 글씨 크기 조정 */
+    color: #4a90e2; /* 파란색 텍스트 */
+    cursor: pointer;
+    /* margin-left: auto; // 이미 justify-content: space-between;으로 정렬 */
+    padding: 5px; /* 클릭 영역 확보 */
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    min-width: 80px; /* 너무 좁아지지 않도록 최소 너비 설정 */
+    text-align: right; /* 텍스트 오른쪽 정렬 */
+}
+
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 한 줄에 7개 숫자 */
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.number-button {
+    width: 45px; /* 버튼 크기 고정 */
+    height: 45px; /* 버튼 크기 고정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333; /* 기본 버튼 배경색 */
+    border-radius: 50%; /* 원형 */
+    color: #f0f0f0;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border: none; /* 기본 버튼 테두리 제거 */
+    -webkit-appearance: none; /* Safari에서 버튼 기본 스타일 제거 */
+    -moz-appearance: none; /* Firefox에서 버튼 기본 스타일 제거 */
+    appearance: none; /* 모든 브라우저에서 버튼 기본 스타일 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+.number-button:hover {
+    background-color: #555;
+}
+
+.number-button.selected {
+    background-color: #4a90e2; /* 선택된 버튼 배경색 (파란색) */
+    color: white;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column; /* 버튼들을 세로로 정렬 */
+    gap: 15px; /* 버튼들 간의 간격 */
+}
+
+/* action-button과 secondary 스타일은 이미 정의되어 있을 것입니다. */
+.action-button {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    background-color: #4a90e2; /* 파란색 */
+    color: white;
+}
+
+.action-button.secondary {
+    background-color: #333; /* 어두운 배경 */
+    color: #4a90e2; /* 파란색 텍스트 */
+}
+
+.auto-select-btn, .submit-btn {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auto-select-btn {
+    background-color: #333;
+    color: #4a90e2; /* 파란색 텍스트 */
+}
+
+.auto-select-btn .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.submit-btn {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 새로운 슬라이더 관련 스타일 추가 */
+.range-selector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.range-selector label {
+    font-size: 16px;
+    margin-right: 10px;
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+.range-selector input[type="range"] {
+    flex-grow: 1; /* 슬라이더가 가능한 공간을 모두 차지하도록 */
+    margin: 0 15px;
+    -webkit-appearance: none; /* 기본 웹킷 스타일 제거 */
+    width: 100%;
+    height: 8px;
+    background: #555;
+    border-radius: 5px;
+    outline: none;
+    transition: opacity .2s;
+}
+
+.range-selector input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4a90e2; /* 슬라이더 핸들 색상 */
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.range-selector input[type="range"]::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#currentMaxNumber {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4a90e2;
+    min-width: 60px; /* 숫자가 길어져도 공간 확보 */
+    text-align: right;
+}
+
+/* 숫자 버튼 그리드의 열 개수를 동적으로 조절하기 위해 (선택 사항) */
+/* 큰 범위의 숫자가 되면 버튼이 많아지므로 유동적인 그리드 설정을 고려할 수 있습니다. */
+.number-grid {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); */ /* 이 설정을 사용하면 더 유동적으로 열이 바뀝니다 */
+    grid-template-columns: repeat(7, 1fr); /* 기존 7개 유지 */
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+/* 작은 화면에서 슬라이더 레이아웃 조정 */
+@media (max-width: 600px) {
+    .range-selector {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .range-selector label {
+        margin-bottom: 5px;
+    }
+    .range-selector input[type="range"] {
+        margin: 0 0 10px 0;
+        width: calc(100% - 10px); /* 패딩 고려 */
+    }
+    #currentMaxNumber {
+        width: 100%;
+        text-align: left;
+    }
+}
