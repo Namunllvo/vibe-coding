@@ -1,0 +1,100 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.wheel-container {
+    position: relative;
+    width: 400px; /* 돌림판 전체 크기 */
+    height: 400px;
+    border-radius: 50%;
+    overflow: hidden; /* 섹터가 밖으로 나가지 않도록 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); /* 회전 애니메이션 */
+}
+
+.sector {
+    position: absolute;
+    width: 50%; /* 반지름 */
+    height: 50%; /* 반지름 */
+    top: 25%;
+    left: 25%;
+    transform-origin: 100% 100%; /* 중심을 기준으로 회전 */
+    overflow: hidden;
+}
+
+.sector::before { /* 각 섹터의 실제 삼각형 부분 */
+    content: '';
+    position: absolute;
+    width: 200%; /* 반지름의 2배 */
+    height: 200%; /* 반지름의 2배 */
+    background: linear-gradient(to bottom right, #ddd, #eee); /* 기본 배경 색상 */
+    transform-origin: 0% 0%;
+    transform: rotate(45deg); /* 삼각형 모양 */
+}
+
+.sector:nth-child(even)::before {
+    background: linear-gradient(to bottom right, #ccc, #ddd); /* 짝수 섹터 다른 색상 */
+}
+
+.sector span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end; /* 숫자를 바깥쪽으로 */
+    align-items: center;
+    padding-right: 20px; /* 숫자와 테두리 간격 */
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    transform-origin: center;
+    transform: rotate(calc(var(--angle) + 9deg)); /* 숫자가 똑바로 보이도록 회전 */
+    z-index: 1; /* 숫자가 배경 위로 오도록 */
+}
+
+.pointer {
+    position: absolute;
+    top: -20px; /* 돌림판 위로 살짝 올라오도록 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid #f33; /* 빨간색 삼각형 포인터 */
+    z-index: 10;
+}
+
+#spinButton {
+    margin-top: 30px;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+#spinButton:hover {
+    background-color: #0056b3;
+}
