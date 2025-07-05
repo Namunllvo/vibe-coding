@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>룰렛(원판)돌리기 - 내가 만든 네이버 돌림판</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>룰렛(원판)돌리기 - 내가 만든 네이버 돌림판</h1>
+        <p>룰렛을 돌려 결정해보세요!</p>
+
+        <div id="step1" class="step">
+            <h2>1. 룰렛(원판) 선택지 개수를 정해주세요.</h2>
+            <div class="input-number-group">
+                <button id="minusBtn" class="qty-btn">-</button>
+                <span id="numChoicesDisplay" class="current-qty">5</span>
+                <button id="plusBtn" class="qty-btn">+</button>
+            </div>
+            <p>(2개~12개 설정가능)</p>
+            <button id="setCountBtn" class="main-btn blue-btn">개수 설정 완료</button>
+        </div>
+
+        <div id="step2" class="step hidden">
+            <h2>2. 룰렛(원판) 선택지를 입력해주세요.</h2>
+            <div id="inputChoicesContainer" class="input-choices-container">
+                </div>
+            <button id="submitChoicesBtn" class="main-btn blue-btn">선택지 입력 완료</button>
+            <button id="resetCountBtn" class="main-btn red-btn">개수 다시 선택</button>
+        </div>
+
+        <div id="step3" class="step hidden">
+            <h2>3. 룰렛(원판)을 돌려주세요.</h2>
+            <div class="pointer-wrapper">
+                <div class="pointer-triangle"></div>
+            </div>
+            <div class="wheel-container">
+                <div class="wheel">
+                    </div>
+            </div>
+            <div id="resultDisplay" class="result-display"></div>
+            <button id="spinWheelBtn" class="main-btn blue-btn">원판 돌리기</button>
+            <div class="button-group">
+                <button id="reselectCountBtn" class="main-btn yellow-btn">개수 재선택</button>
+                <button id="editChoicesBtn" class="main-btn yellow-btn">선택지 수정</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

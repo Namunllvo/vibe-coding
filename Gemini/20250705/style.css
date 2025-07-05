@@ -1,0 +1,396 @@
+/* 기본 설정 (이전과 동일) */
+:root {
+    --bg-dark: #333;
+    --text-color: #f0f0f0;
+    --blue-btn: #007bff;
+    --blue-btn-hover: #0056b3;
+    --red-btn: #dc3545;
+    --red-btn-hover: #c82333;
+    --yellow-btn: #ffc107;
+    --yellow-btn-hover: #e0a800;
+
+    /* 룰렛 색상 팔레트 (원하는 색상으로 변경 가능) */
+    --color1: #a8dadc; /* 하늘색 계열 */
+    --color2: #e9edc9; /* 연두색 계열 */
+    --color3: #fce8a9; /* 노란색 계열 */
+    --color4: #f4a261; /* 주황색 계열 */
+    --color5: #e76f51; /* 붉은색 계열 */
+    --color6: #c8b6ff; /* 연보라색 */
+    --color7: #a2d2ff; /* 밝은 파랑 */
+    --color8: #ffadad; /* 밝은 빨강 */
+    --color9: #bdb2ff; /* 중간 보라 */
+    --color10: #ffe6a7; /* 밝은 오렌지 */
+    --color11: #a9d6e5; /* 민트 블루 */
+    --color12: #ffdab9; /* 피치 */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #222;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+p {
+    font-size: 1.1em;
+    margin-bottom: 25px;
+    color: #ccc;
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-bottom: 25px;
+    color: #eee;
+}
+
+.step {
+    border-top: 1px solid #444;
+    padding-top: 30px;
+}
+
+.step:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.step.hidden {
+    display: none;
+}
+
+/* --- Step 1: 개수 설정 --- */
+.input-number-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.qty-btn {
+    background-color: var(--blue-btn);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 50px;
+    height: 50px;
+    font-size: 2.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+.qty-btn:hover {
+    background-color: var(--blue-btn-hover);
+}
+
+.current-qty {
+    font-size: 3em;
+    font-weight: bold;
+    color: #fff;
+    margin: 0 20px;
+    min-width: 60px;
+}
+
+/* --- Step 2: 선택지 입력 --- */
+.input-choices-container {
+    margin-bottom: 30px;
+}
+
+.input-choice-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.input-choice-item label {
+    font-size: 1.1em;
+    margin-right: 15px;
+    min-width: 40px;
+    text-align: right;
+    color: #ddd;
+}
+
+.input-choice-item input[type="text"] {
+    flex-grow: 1;
+    padding: 15px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 8px;
+    background-color: #444;
+    color: white;
+    outline: none;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.input-choice-item input[type="text"]:focus {
+    background-color: #555;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--blue-btn);
+}
+
+.input-choice-item input[type="text"].invalid {
+    border: 2px solid var(--red-btn);
+}
+
+/* --- Buttons --- */
+.main-btn {
+    padding: 18px 35px;
+    font-size: 1.3em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin: 10px;
+    white-space: nowrap;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px);
+}
+
+.main-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.main-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.main-btn.blue-btn {
+    background-color: var(--blue-btn);
+    color: white;
+}
+
+.main-btn.blue-btn:hover {
+    background-color: var(--blue-btn-hover);
+}
+
+.main-btn.red-btn {
+    background-color: var(--red-btn);
+    color: white;
+}
+
+.main-btn.red-btn:hover {
+    background-color: var(--red-btn-hover);
+}
+
+.main-btn.yellow-btn {
+    background-color: var(--yellow-btn);
+    color: #333;
+}
+
+.main-btn.yellow-btn:hover {
+    background-color: var(--yellow-btn-hover);
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* --- Step 3: 룰렛 돌리기 --- */
+.pointer-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    margin-top: 10px;
+}
+
+.pointer-triangle {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid #f33;
+    position: absolute;
+    top: -20px;
+    left: -20px;
+}
+
+.wheel-container {
+    position: relative;
+    width: 380px; /* 룰렛 전체 크기 */
+    height: 380px;
+    border-radius: 50%;
+    overflow: hidden; /* **중요: 섹터가 이 원형 컨테이너 밖으로 나가지 않도록 함** */
+    margin: 40px auto;
+    background-color: #444; /* 룰렛 배경 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 5px solid #555; /* 룰렛 테두리 추가 */
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.sector {
+    position: absolute;
+    /* 섹터는 룰렛의 중심에서부터 반지름까지 확장되는 사각형으로 간주 */
+    width: 50%; /* 룰렛 반지름 */
+    height: 50%; /* 룰렛 반지름 */
+    top: 0;
+    left: 50%; /* 룰렛 중심의 오른쪽 절반에서 시작 */
+    transform-origin: 0% 100%; /* 왼쪽 하단 (룰렛의 중앙)을 기준으로 회전 */
+    overflow: hidden; /* 섹터 내부 요소가 이 사각형 밖으로 나가지 않도록 */
+    /* background-color: blue; /* 디버깅용: 섹터 영역 확인 */ */
+}
+
+.sector::before { /* 각 섹터의 실제 색상 영역 */
+    content: '';
+    position: absolute;
+    width: 200%; /* 섹터 너비의 2배 (룰렛 지름과 같음) */
+    height: 200%; /* 섹터 높이의 2배 (룰렛 지름과 같음) */
+    top: -100%; /* 섹터의 상단에서 시작하여 룰렛 중심까지 오도록 */
+    left: -100%; /* 섹터의 좌측에서 시작하여 룰렛 중심까지 오도록 */
+    background: var(--sector-color); /* JavaScript에서 동적으로 설정될 색상 */
+    border-radius: 50%; /* 원형으로 잘라내기 위함 (룰렛 전체를 덮도록) */
+    transform-origin: center center; /* 회전 기준점을 원의 중심으로 */
+    border: 1px solid rgba(0,0,0,0.1); /* 섹터 경계선 추가 */
+    box-sizing: border-box;
+}
+
+.sector span {
+    position: absolute;
+    /* 텍스트를 섹터의 중심(룰렛의 중심 아님)으로부터 바깥쪽으로 배치 */
+    top: 50%; /* 섹터의 Y축 중앙 */
+    left: 50%; /* 섹터의 X축 중앙 */
+    transform: translate(-50%, -50%); /* 텍스트 자체를 중앙으로 정렬 */
+    
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 0 0 5px rgba(0,0,0,0.2);
+    z-index: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%; /* 긴 텍스트가 잘리도록 제한 (필요시 조절) */
+
+    /* 텍스트가 섹터와 함께 회전하지만, 그 안에서 다시 똑바로 보이도록 조정 */
+    /* --text-rotation은 JS에서 각 섹터의 중간 각도를 받아서 사용 */
+    transform: translate(-50%, -50%) rotate(calc(var(--text-rotation) * -1)) translateX(80%);
+    /*
+        설명:
+        1. translate(-50%, -50%): 텍스트 요소를 자신의 크기 기준으로 정확히 중앙에 놓습니다.
+        2. rotate(calc(var(--text-rotation) * -1)): 룰렛의 회전 방향과 반대로 텍스트를 회전시켜 항상 수직으로 보이게 합니다.
+        3. translateX(80%): 텍스트를 섹터의 중심으로부터 바깥쪽으로 이동시킵니다. (80%는 텍스트 길이의 80%가 아니라,
+           섹터 너비의 80%에 해당하는 거리를 이동시킵니다. 이 값은 룰렛 크기, 폰트 크기 등에 따라 조절해야 합니다.)
+    */
+}
+
+
+.result-display {
+    margin-top: 25px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #fff;
+    min-height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    .qty-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 2em;
+    }
+    .current-qty {
+        font-size: 2.5em;
+        margin: 0 10px;
+    }
+    .main-btn {
+        padding: 12px 25px;
+        font-size: 1.1em;
+        margin: 8px;
+    }
+    .wheel-container {
+        width: 300px;
+        height: 300px;
+        margin: 30px auto;
+    }
+    .sector span {
+        font-size: 1.3em;
+        /* 작은 화면에서는 텍스트 이동 거리 조정 */
+        transform: translate(-50%, -50%) rotate(calc(var(--text-rotation) * -1)) translateX(70%);
+        max-width: 75%;
+    }
+    .pointer-triangle {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 30px solid #f33;
+        top: -15px;
+        left: -15px;
+    }
+    .result-display {
+        font-size: 1.5em;
+    }
+}
+
+/* 아주 작은 화면 */
+@media (max-width: 380px) {
+    .wheel-container {
+        width: 260px;
+        height: 260px;
+    }
+    .sector span {
+        font-size: 1.1em;
+        transform: translate(-50%, -50%) rotate(calc(var(--text-rotation) * -1)) translateX(65%);
+        max-width: 70%;
+    }
+}
