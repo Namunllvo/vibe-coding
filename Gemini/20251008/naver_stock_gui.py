@@ -50,8 +50,8 @@ from PIL import Image
 
 # 기본값
 DEFAULT_VIEWPORT = {"width": 1366, "height": 768}
-DEFAULT_AREA = {"left": 264, "top": 233, "right": 1222, "bottom": 726}
-OUTPUT_DIR = Path("./output")
+DEFAULT_AREA = {"left": 195, "top": 125, "right": 1170, "bottom": 640}
+OUTPUT_DIR = Path("./captures")  # 폴더 이름 변경
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 OVERVIEW_SELECTORS = [
@@ -101,6 +101,7 @@ class ScrapeWorker(threading.Thread):
                 else:
                     # 2) 이름으로 검색 — 네이버 통합검색에서 finance.naver 링크 찾기
                     q = f"{self.query} 주식"
+                    print("1:  ", q)
                     search_url = "https://search.naver.com/search.naver?query=" + q
                     page.goto(search_url, wait_until="domcontentloaded", timeout=15000)
                     time.sleep(0.8)
@@ -110,7 +111,8 @@ class ScrapeWorker(threading.Thread):
                         href = a.get_attribute('href')
                         if not href:
                             continue
-                        m = re.search(r"finance\.naver\.com/item/main\.naver\?code=(\d{4,6})", href)
+                        m = re.search(r"finance\.naver\.com/item/main\.nhn\?code=(\d{4,6})", href)
+                        print("2:  ", href)
                         if m:
                             code = m.group(1).zfill(6)
                             found = href
@@ -118,13 +120,15 @@ class ScrapeWorker(threading.Thread):
                     if not code:
                         # 대체 전략: 검색 결과 페이지 전체 HTML에서 href 추출(더 넓게 검색)
                         html = page.content()
-                        m = re.search(r"finance\.naver\.com/item/main\.naver\?code=(\d{4,6})", html)
+                        m = re.search(r"finance\.naver\.com/item/main\.nhn\?code=(\d{4,6})", html)
+                        print("3:  ", href)
                         if m:
                             code = m.group(1).zfill(6)
                     if not code:
                         browser.close()
                         raise RuntimeError(f"종목코드를 찾을 수 없습니다: {self.query}")
-                    url = f"https://finance.naver.com/item/main.naver?code={code}"
+                    url = f"https://finance.naver.com/item/main.nhn?code={code}"
+                    print("4:  ", url)
 
                 # 3) 해당 종목 페이지로 이동
                 try:
@@ -168,19 +172,30 @@ class ScrapeWorker(threading.Thread):
                     cropped_bytes = bio.getvalue()
 
                 # 파일 저장
-                prefix = f"{code}_{timestamp()}"
-                img_path = OUTPUT_DIR / f"{prefix}.png"
-                with open(img_path, "wb") as f:
-                    f.write(cropped_bytes)
+                # ✅ 스크린샷 저장 (중복 방지 이름 + 상태 표시)
+                save_dir = OUTPUT_DIR
+                os.makedirs(save_dir, exist_ok=True)
+                timestamp_str = timestamp()
+                base_name = f"{self.query}_{timestamp_str}"
+                filepath = os.path.join(save_dir, f"{base_name}.png")
 
-                txt_path = OUTPUT_DIR / f"{prefix}.txt"
+                i = 1
+                while os.path.exists(filepath):
+                    filepath = os.path.join(save_dir, f"{base_name}_{i}.png")
+                    i += 1
+
+                cropped.save(filepath)
+
+
+                txt_path = os.path.splitext(filepath)[0] + ".txt"
                 with open(txt_path, "w", encoding="utf-8") as f:
                     f.write(overview)
+
 
                 browser.close()
 
             # 완료 신호
-            self.signals.result.emit(cropped_bytes, overview, str(prefix))
+            self.signals.result.emit(cropped_bytes, overview, str(filepath))
         except Exception as e:
             self.signals.error.emit(str(e))
         finally:
@@ -253,6 +268,10 @@ class MainWindow(QWidget):
         self.btn_change_folder.clicked.connect(self.open_output_folder)
         bottom_row.addWidget(self.btn_change_folder)
 
+        self.btn_reset = QPushButton('초기화')  # ← 새로 추가
+        self.btn_reset.clicked.connect(self.reset_view)  # 클릭 시 실행할 함수
+        bottom_row.addWidget(self.btn_reset)
+
         self.btn_config_area = QPushButton('캡쳐 영역 설정')
         self.btn_config_area.clicked.connect(self.configure_area)
         bottom_row.addWidget(self.btn_config_area)
@@ -261,6 +280,17 @@ class MainWindow(QWidget):
         self.selector_input.setPlaceholderText('기업개요 셀렉터(선택, CSS selector)')
         bottom_row.addWidget(self.selector_input)
 
+        # Overview text area 아래 또는 오른쪽에 버튼 추가
+        # self.btn_copy_overview = QPushButton("📋 기업개요 복사")
+        # self.btn_copy_overview.clicked.connect(self.copy_overview_to_clipboard)
+        # bottom_row.addWidget(self.btn_copy_overview)  # 기존 bottom_row에 추가
+
+        # 🔹 복사 버튼 추가
+        self.btn_copy_overview = QPushButton("📋 기업개요 복사")
+        self.btn_copy_overview.clicked.connect(self.copy_overview_text)
+        layout.addWidget(self.btn_copy_overview)
+
+
         layout.addLayout(bottom_row)
 
         self.setLayout(layout)
@@ -268,6 +298,12 @@ class MainWindow(QWidget):
         # internal
         self.current_worker = None
         self.area = DEFAULT_AREA.copy()
+
+        # 🔹 상태 표시줄
+        self.status_label = QLabel("상태: 대기 중")
+        self.status_label.setAlignment(Qt.AlignRight)
+        self.status_label.setStyleSheet("color: #444; font-size: 12px;")
+        layout.addWidget(self.status_label)
 
     def on_search(self):
         query = self.input.text().strip()
@@ -278,18 +314,18 @@ class MainWindow(QWidget):
             QMessageBox.information(self, '진행중', '이미 작업이 진행중입니다. 완료 후 다시 시도하세요.')
             return
 
-        selector_override = self.selector_input.text().strip() or None
-        self.overview_text.setPlainText('스크랩 중...')
-        self.preview_label.setText('로딩 중...')
+        self.status_label.setText("⏳ 캡처 중입니다...")
+        self.status_label.setStyleSheet("color: orange; font-weight:bold;")
+        self.preview_label.setText("로딩 중...")
+        self.overview_text.setPlainText("스크랩 중...")
 
-        worker = ScrapeWorker(query=query, area=self.area, selector_override=selector_override, headless=True)
-        worker.signals.result.connect(self.on_result)
-        worker.signals.error.connect(self.on_error)
-        worker.signals.finished.connect(self.on_finished)
-        self.current_worker = worker
-        worker.start()
+        self.worker = ScrapeWorker(query=query, area=self.area)
+        self.worker.signals.result.connect(self.on_result)
+        self.worker.signals.error.connect(self.on_error)
+        self.worker.signals.finished.connect(self.on_finished)
+        self.worker.start()
 
-    def on_result(self, image_bytes: bytes, overview: str, prefix: str):
+    def on_result(self, image_bytes: bytes, overview: str, filepath: str):
         # 이미지 보여주기
         qimg = QImage.fromData(image_bytes)
         pix = QPixmap.fromImage(qimg)
@@ -298,13 +334,28 @@ class MainWindow(QWidget):
         self.preview_label.setPixmap(scaled)
         # overview text
         self.overview_text.setPlainText(overview)
-        # 상태 표시
-        self.preview_label.setToolTip(f"저장 파일 접두사: {prefix}")
+        # 상태 표시 (실제 저장 경로 기준)
+        self.status_label.setText(f"📸 {os.path.basename(filepath)} 저장 완료")
+        self.preview_label.setToolTip(f"저장 경로: {filepath}")
+        self.status_label.setStyleSheet("color: green; font-weight:bold;")
+
 
     def on_error(self, msg: str):
         QMessageBox.critical(self, '에러', msg)
         self.overview_text.setPlainText('(오류 발생) ' + msg)
         self.preview_label.setText('에러')
+        self.overview_text.setPlainText(f"(에러) {msg}")
+        self.status_label.setText(f"❌ 오류 발생: {msg}")
+        self.status_label.setStyleSheet("color: red; font-weight:bold;")
+
+    # 리셋 초기화
+    def reset_view(self):
+        """이미지 미리보기와 기업개요 텍스트 초기화"""
+        self.preview_label.setPixmap(QPixmap())  # 이미지 초기화
+        self.preview_label.setText('이미지 미리보기 영역')
+        self.overview_text.clear()
+        self.status_label.setText('')  # 상태 표시 초기화
+
 
     def on_finished(self):
         # optional: enable/disable controls
@@ -324,6 +375,21 @@ class MainWindow(QWidget):
         dlg = AreaConfigDialog(self.area, self)
         if dlg.exec():
             self.area = dlg.get_area()
+
+    def copy_overview_text(self):
+        raw_text = self.overview_text.toPlainText()
+        clean_text = self.clean_overview_text_single_line(raw_text)
+        clipboard = QApplication.clipboard()
+        clipboard.setText(clean_text)
+        self.status_label.setText("✅ 기업개요 텍스트가 클립보드에 복사되었습니다.")
+        self.status_label.setStyleSheet("color: green; font-weight:bold;")
+
+    @staticmethod
+    def clean_overview_text_single_line(raw_text: str) -> str:
+        import re
+        text = re.sub(r'\s+', ' ', raw_text)  # 모든 연속 공백 → 한 칸
+        return text.strip()
+
 
 
 from PySide6.QtWidgets import QDialog, QFormLayout
